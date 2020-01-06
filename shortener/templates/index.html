@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- Custom CSS -->
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Nanum+Gothic&display=swap');
+    @font-face {
+      font-family: 'jalnan';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    .font-jalnan {
+      font-family: 'jalnan';
+    }
+
+    * {
+      font-family: 'Nanum Gothic', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #131417;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    input:focus, button:focus {
+      outline: none;
+    }
+
+    body {
+      background: #F2994A;
+      background: -webkit-linear-gradient(to right, #F2C94C, #F2994A);
+      background: linear-gradient(to right, #F2C94C, #F2994A);
+    }
+
+    .url-shortener {
+      margin: 10px 10%;
+    }
+
+    .title {
+      margin: 30px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: 0.1rem;
+    }
+
+    .shortener,
+    .shortURL {
+      overflow: hidden;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    .custom-input-text,
+    .custom-btn {
+      float: left;
+      display: inline-block;
+      height: 55px;
+      border: 0;
+      letter-spacing: 0.05rem;
+    }
+
+    .custom-input-text {
+      width: calc(100% - 100px);
+      padding: 0 15px;
+      background: #fff;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+
+    .custom-btn {
+      cursor: pointer;
+      width: 100px;
+      background: #444344; 
+      color: #fff;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      text-align: center;
+    }
+
+    .custom-btn::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+    .custom-btn:hover{
+      background: #131417;
+    }
+    
+  </style>
+  <title>URL Shortener</title>
+</head>
+
+<body>
+  <section class="url-shortener">
+    <p class="title font-jalnan">URL Shortener</p>
+    <form action='' method='POST' class="shortener">
+      <input autocomplete="off" type="text" name="url" class="custom-input-text" placeholder="{{longURL}}"/>
+      <input type="submit" value="shorten" class="font-jalnan custom-btn">
+      {% csrf_token %}
+    </form>
+    <div class="shortURL">
+      <div id="shortURL" class="custom-input-text">{{ shortURL }}</div>
+      <button class="font-jalnan custom-btn" onclick="copy('{{ shortURL }}')">copy</button>
+    </div>
+  </section>
+  <!-- Custom JS -->
+  <script>
+    function copy(url) {
+      var dummy = document.createElement("textarea");
+      document.body.appendChild(dummy);
+      dummy.value = url
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+    }
+  </script>
+</body>
+</html>
