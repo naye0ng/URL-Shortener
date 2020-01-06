@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import URL as URL_Model
 
 def index(request) :
@@ -41,3 +41,10 @@ def encoding62(index) :
         index = index//62
 
     return result.zfill(8)
+
+def redirectPath(request, shortURL) :
+    # 방문 로그 수집
+    url = get_object_or_404(URL_Model, shortURL = shortURL)
+    return redirect(to=url.url)
+    
+
