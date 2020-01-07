@@ -2,13 +2,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import URL as URL_Model
 
 def index(request) :
-    if request.method == 'POST' :
+    # rank
+    rank = URL_Model.objects.all().order_by('-visited')[:5]
+
+    if request.method == 'POST' and request.POST.get("url"):
         # TODO : https://, http:// 붙는거 제거해서 저장
         url = request.POST.get("url").strip()
         shortURL = makeShortURL(url) 
-        return render(request, 'index.html',{'longURL':url,'shortURL':shortURL})
+        return render(request, 'index.html',{'longURL':url,'shortURL':shortURL,'rank':rank})
 
-    return render(request, 'index.html',{'longURL':'Enter the link here','shortURL':''})
+    return render(request, 'index.html',{'longURL':'Enter the link here','shortURL':'','rank':rank})
 
 
 def makeShortURL(URL) :
@@ -39,12 +42,14 @@ def encoding62(index) :
     while index % 62 > 0 or result == "" :
         result += words[index % 62]
         index = index//62
-
-    return result.zfill(8)
+    # result.zfill(8)
+    return result
 
 def redirectPath(request, shortURL) :
-    # 방문 로그 수집
     url = get_object_or_404(URL_Model, shortURL = shortURL)
+    # 방문 로그 수집
+    url.visited += 1
+    url.save()
     return redirect(to=url.url)
     
 

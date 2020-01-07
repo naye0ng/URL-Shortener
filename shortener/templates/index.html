@@ -38,18 +38,23 @@
       background: linear-gradient(to right, #F2C94C, #F2994A);
     }
 
-    .url-shortener {
-      margin: 10px 10%;
+    .url-shortener, .visited-chart{
+      margin-top: 5%;
+      padding: 10px 10%;
     }
 
     .title {
-      margin: 30px;
+      /* height:80px; */
+      margin: 30px 0;
       text-align: center;
       font-size: 2rem;
       font-weight: 600;
       letter-spacing: 0.1rem;
     }
-
+    .urls-wrap{
+      overflow: hidden;
+      height: 170px;
+    }
     .shortener,
     .shortURL {
       overflow: hidden;
@@ -83,7 +88,6 @@
       border-bottom-right-radius: 10px;
       text-align: center;
     }
-
     .custom-btn::after {
       content: "";
       display: block;
@@ -92,30 +96,90 @@
     .custom-btn:hover{
       background: #131417;
     }
-    
+    .shortURL .custom-input-text{
+      padding-top:18px;
+    }
+    .progress-wrap{
+      width: 100%;
+      margin: 20px 0;
+    }
+    .progress-bar, .visited-cnt{
+      display: inline-block;
+    }
+    .progress-bar{
+      position: relative;
+      height: 35px;
+      /* background-color: #63d471; */
+      background-color: #f2cf43;
+background-image: linear-gradient(315deg, #f2cf43 0%, #19a186 74%, #444344 );
+
+
+      border-radius: 30px;
+    }
+    .visited-url{
+      margin: 5px 10px;
+      color: #444344; 
+      font-size: 0.8rem;
+    }
+    .visited-cnt{
+      position: absolute;
+      top:5px;
+      right:-40px;
+      width: 50px;
+      text-align: center;
+    }
   </style>
   <title>URL Shortener</title>
 </head>
 
 <body>
   <section class="url-shortener">
-    <p class="title font-jalnan">URL Shortener</p>
-    <form action='' method='POST' class="shortener">
-      <input autocomplete="off" type="text" name="url" class="custom-input-text" placeholder="{{longURL}}"/>
-      <input type="submit" value="shorten" class="font-jalnan custom-btn">
-      {% csrf_token %}
-    </form>
-    <div class="shortURL">
-      <div id="shortURL" class="custom-input-text">{{ shortURL }}</div>
-      <button class="font-jalnan custom-btn" onclick="copy('{{ shortURL }}')">copy</button>
+    <p class="title font-jalnan">URL Shortener 🌵</p>
+    <div class="urls-wrap">
+      <form action='' method='POST' class="shortener">
+        <input autocomplete="off" type="text" name="url" class="custom-input-text" placeholder="{{longURL}}"/>
+        <input type="submit" value="shorten" class="font-jalnan custom-btn">
+        {% csrf_token %}
+      </form>
+      {% if shortURL %}
+      <div class="shortURL">
+        <div id="shortURL" class="custom-input-text" >{{ shortURL }}</div>
+        <button class="font-jalnan custom-btn" onclick="copy('{{ shortURL }}')">copy</button>
+      </div>
+      {% endif %}
     </div>
   </section>
+  <section class="visited-chart">
+    <p class="title font-jalnan">The Most Visited URL</p>
+    {% for url in rank %}
+      {% if url.visited > 0 %}
+      <div class="progress-wrap">
+        <div class="visited-url font-jalnan">{{ url.shortURL }}</div>
+        <div class="progress-bar" style="width:calc(({{url.visited}} / {{rank.first.visited}}) * 100% - 50px);">
+          <div class="visited-cnt font-jalnan">{{ url.visited }}</div>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </section>
+
+
   <!-- Custom JS -->
-  <script>
+  <script type="text/javascript">
+    var el = document.getElementById("shortURL")
+    var el2 = document.getElementsByClassName("visited-url")
+
+    var path = window.location.href
+    el.innerHTML = path + el.innerHTML
+    for (let value of el2){
+      value.innerHTML = path + value.innerHTML
+    }
+   
+    
     function copy(url) {
       var dummy = document.createElement("textarea");
       document.body.appendChild(dummy);
-      dummy.value = url
+      dummy.value = window.location.href+url
       dummy.select();
       document.execCommand("copy");
       document.body.removeChild(dummy);
