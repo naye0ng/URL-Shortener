@@ -2,63 +2,63 @@
 
 {% block content %}
 <section class="rank">
-    <p class="title font-jalnan">The Most Visited & Copied URL</p>
-    <div class="rank-filter-btns">
-        <button id="visit-btn" class="rank-filter-btn btnA font-jalnan" onclick="toggleRankFilter(0)">Visited</button>
-        <button id="copy-btn"  class="rank-filter-btn btnB font-jalnan" onclick="toggleRankFilter(1)">Copied</buttonid="">
-    </div>
-    
-    <div id="visit-rank" class="ranking">
-        {% for url in visited_rank %}
-        <div class="chart-wrapper row">
-            <div class="col-4 head-title">{{ url.title }}</div>
-            <div class="col">
-                <div class="horizental-chart chartA"
-                    style="width:calc(({{url.visited}} / {{visited_rank.first.visited}}) * 100% + 2px);">
-                    <div class="chart-data font-jalnan">
-                        {% if url.visited > 0 %}
-                        {{ url.visited }}
-                        {% endif %}
-                    </div>
-                </div>
-                <br />
-                <div class="horizental-chart chartB"
-                    style="width:calc(({{ url.copied }} / {{copied_rank.first.copied}}) * 100% + 2px);">
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    <div id="copy-rank" class="ranking">
-        {% for url in copied_rank %}
-        <div class="chart-wrapper row">
-            <div class="col-4 head-title">{{ url.title }}</div>
-            <div class="col">
-                <div class="horizental-chart chartA"
-                    style="width:calc(({{url.visited}} / {{visited_rank.first.visited}}) * 100% + 2px);">
-                </div>
-                <br />
-                <div class="horizental-chart chartB"
-                    style="width:calc(({{ url.copied }} / {{copied_rank.first.copied}}) * 100% + 2px);">
-                    <div class="chart-data font-jalnan">
-                        {% if url.copied > 0 %}
-                        {{ url.copied }}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-<script type="text/javascript">
-var rank = ["visit-rank", "copy-rank"]
+  <p class="title font-jalnan">The Most Visited & Copied URL</p>
+  <div class="rank-filter-btns">
+    <button id="visit-btn" class="rank-filter-btn btnA font-jalnan" onclick="toggleRankFilter(0)">Visited</button>
+    <button id="copy-btn" class="rank-filter-btn btnB font-jalnan" onclick="toggleRankFilter(1)">Copied</buttonid="">
+  </div>
 
-// initial rank setting
-toggleRankFilter(0)
+  <div id="visit-rank" class="ranking">
+    {% for url in visited_rank %}
+    <div class="chart-wrapper row">
+      <div class="col-4 head-title">{{ url.title }}</div>
+      <div class="col">
+        <div class="horizental-chart chartA"
+          style="width:calc(({{url.visited}} / {{visited_rank.first.visited}}) * 100% + 2px);">
+          <div class="chart-data font-jalnan">
+            {% if url.visited > 0 %}
+            {{ url.visited }}
+            {% endif %}
+          </div>
+        </div>
+        <br />
+        <div class="horizental-chart chartB"
+          style="width:calc(({{ url.copied }} / {{copied_rank.first.copied}}) * 100% + 2px);">
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div id="copy-rank" class="ranking">
+    {% for url in copied_rank %}
+    <div class="chart-wrapper row">
+      <div class="col-4 head-title">{{ url.title }}</div>
+      <div class="col">
+        <div class="horizental-chart chartA"
+          style="width:calc(({{url.visited}} / {{visited_rank.first.visited}}) * 100% + 2px);">
+        </div>
+        <br />
+        <div class="horizental-chart chartB"
+          style="width:calc(({{ url.copied }} / {{copied_rank.first.copied}}) * 100% + 2px);">
+          <div class="chart-data font-jalnan">
+            {% if url.copied > 0 %}
+            {{ url.copied }}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <script type="text/javascript">
+    var rank = ["visit-rank", "copy-rank"]
 
-function toggleRankFilter(i){
-    document.getElementById(rank[i]).style.display = "block"
-    document.getElementById(rank[(i+1)%2]).style.display = "none"
-}
-</script>
-{% endblock %}
+    // initial rank setting
+    toggleRankFilter(0)
+
+    function toggleRankFilter(i) {
+      document.getElementById(rank[i]).style.display = "block"
+      document.getElementById(rank[(i + 1) % 2]).style.display = "none"
+    }
+  </script>
+  {% endblock %}
