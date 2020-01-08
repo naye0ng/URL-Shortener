@@ -1,31 +1,37 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
 from .models import URL as URL_Model
+import requests
+from bs4 import BeautifulSoup
 
 def index(request) :
-    # rank
-    rank = URL_Model.objects.all().order_by('-visited')[:5]
-
     if request.method == 'POST' and request.POST.get("url"):
-        # TODO : https://, http:// 붙는거 제거해서 저장
-        url = request.POST.get("url").strip()
+        url = request.POST.get("url").replace("https://","").replace("http://","").strip()
         shortURL = makeShortURL(url) 
-        return render(request, 'index.html',{'longURL':url,'shortURL':shortURL,'rank':rank})
-
-    return render(request, 'index.html',{'longURL':'Enter the link here','shortURL':'','rank':rank})
+        return JsonResponse({'shortURL' : shortURL}, json_dumps_params = {'ensure_ascii': True})
+    
+    return render(request, 'main.html',{'longURL':'Enter the link here'})
 
 
 def makeShortURL(URL) :
     # 중복 체크
     obj = URL_Model.objects.filter(url = URL).first() or False
+
     if not obj :
         newURL = URL_Model.objects.create(url = URL)
         shortURL = encoding62(newURL.id)
 
+        # 크롤링해서 페이지 정보 가져오기
+        req = requests.get('http://'+URL)
+        html = req.text
+        soup = BeautifulSoup(html, 'html.parser')
+        title = soup.select('title')[0].text or ''
+
+        newURL.title  = title 
         newURL.shortURL = shortURL
         newURL.save()
     else :
         shortURL = obj.shortURL 
-
     return shortURL
 
 
@@ -50,6 +56,18 @@ def redirectPath(request, shortURL) :
     # 방문 로그 수집
     url.visited += 1
     url.save()
-    return redirect(to=url.url)
-    
+    return redirect(to='http://'+url.url)
 
+def copy(requests,shortURL) :
+    url = get_object_or_404(URL_Model, shortURL = shortURL)
+    # 복사 횟수 추가
+    url.copied += 1
+    url.save()
+    return JsonResponse({'shortURL' : shortURL}, json_dumps_params = {'ensure_ascii': True})
+
+def rank(request) :
+    visited_rank = URL_Model.objects.all().order_by('-visited')[:5]
+    copied_rank = URL_Model.objects.all().order_by('-copied')[:5]
+
+    return render(request, 'rank.html',{'visited_rank':visited_rank,'copied_rank':copied_rank})
+    

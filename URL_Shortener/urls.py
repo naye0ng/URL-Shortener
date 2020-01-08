@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
     path('<str:shortURL>', views.redirectPath),
+    path('rank/', views.rank),
+    path('copy/<str:shortURL>', views.copy),
 ]

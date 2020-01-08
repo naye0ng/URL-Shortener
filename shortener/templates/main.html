@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section class="main">
+    <p class="title font-jalnan">URL Shortener 🌵</p>
+    <div class="converter">
+      <div class="form-wrapper">
+        <input autocomplete="off" type="text" id="longURL" name="url" class="url-input" placeholder="{{longURL}}"/>
+        <button class="font-jalnan submit-btn" onclick="converterURL()">shorten</button>
+        {% csrf_token %}
+      </div>
+
+      <div class="result-wrapper">
+        <div id="shortURL" class="url-input" ></div>
+        <button class="font-jalnan submit-btn" onclick="copy()">copy</button>
+      </div>
+
+    </div>
+</section>
+<script type="text/javascript">
+  function converterURL(){
+    var csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value
+    var url = document.getElementById("longURL").value
+    
+    const formData = new FormData();
+    formData.append('url',url)
+    const obj = {
+      body: formData,
+      headers: {'X-CSRFToken': csrf_token},
+      method: 'POST'
+    }
+    fetch('', obj)
+      .then(res => res.json())
+      .then(json =>{
+        var shortURL = document.getElementById("shortURL")
+        var url = window.location.href + json.shortURL
+        shortURL.innerHTML = url
+        shortURL.setAttribute("value", url)
+      })
+  }
+
+  function copy(){
+    var url = document.getElementById("shortURL").innerText;
+    console.log(url.split('/').reverse()[0])
+    //copy 횟수 증가
+    fetch('/copy/'+url.split('/').reverse()[0])
+      
+    // 복사
+    var dummy = document.createElement("textarea");
+    document.body.appendChild(dummy);
+    dummy.value = url
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+  }
+</script>
+{% endblock %}
